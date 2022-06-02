@@ -97,6 +97,8 @@ def run():
         epoch_train_loss = engine.train_fn(train_data_loader, model, optimizer, device, scheduler, weights)
         outputs, targets, epoch_eval_loss = engine.eval_fn(valid_data_loader, model, device, weights)
         # outputs = np.array(outputs) >= config.ACC_CUTOFF
+        print(f" Model output is {outputs}")
+        print(f"Actual target is {targets}")
         accuracy = metrics.accuracy_score(targets, outputs)
         print("Train loss = ", epoch_train_loss)
         print("Validation Loss = ", epoch_eval_loss)
