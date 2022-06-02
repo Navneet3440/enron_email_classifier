@@ -16,11 +16,13 @@ from transformers import get_linear_schedule_with_warmup
 
 def calculate_weights(data_frame):
     weights = []
+    print(data_frame.shape[0])
     for tag in sorted(data_frame['class_tag'].unique().tolist()):
-        print(tag)
         count = (data_frame['class_tag'] == tag).sum()
-        weights.append(1-(count/data_frame.shape[0]))
-    print(weights)
+        weight_value = (1-(count/data_frame.shape[0]))/(config.NUMBER_OF_CLASS-1)
+        print(f"{tag}-{weight_value}")
+        weights.append(weight_value)
+    print(f"sum of weights-{sum(weights)}")
     return weights
 
 
@@ -28,7 +30,6 @@ def run():
     dfx = pd.read_csv(config.TRAINING_FILE)
     dfx['class_tag'] = dfx['class_tag'] - 1
     print("Shape of datframe:",dfx.shape)
-    weights = calculate_weights(dfx)
     weights =torch.tensor(weights, dtype = torch.float)
     df_train, df_valid = model_selection.train_test_split(
         dfx, test_size=0.2, random_state=42, stratify=dfx.class_tag.values
@@ -36,6 +37,7 @@ def run():
 
     df_train = df_train.reset_index(drop=True)
     df_valid = df_valid.reset_index(drop=True)
+    weights = calculate_weights(df_train)
     print("Shape of train datframe:",df_train.shape)
     print("Shape of validation dataframe:",df_valid.shape)
 
