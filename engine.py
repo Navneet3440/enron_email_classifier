@@ -4,7 +4,10 @@ from tqdm import tqdm
 
 
 def loss_fn(outputs, targets, weights):
-    loss = nn.CrossEntropyLoss(weight=weights)(outputs, targets.view(-1, 1))
+    # print(f"output is ={outputs} \n with shape{outputs.shape}")
+    # print(f"target is ={targets.viem(-1,1)} \n with shape{targets.view(-1,1).shape}")
+    # print(outputs.shape,targets.shape,weights.shape,outputs.dtype,targets.dtype,weights.dtype)
+    loss = nn.CrossEntropyLoss(weight=weights)(outputs, targets)
     return loss
 
 
@@ -21,13 +24,13 @@ def train_fn(data_loader, model, optimizer, device, scheduler, weights):
         ids = ids.to(device, dtype=torch.long)
         token_type_ids = token_type_ids.to(device, dtype=torch.long)
         mask = mask.to(device, dtype=torch.long)
-        targets = targets.to(device, dtype=torch.float)
+        targets = targets.to(device, dtype=torch.long)
         weights = weights.to(device, dtype=torch.float)
 
         optimizer.zero_grad()
         outputs = model(ids=ids, mask=mask, token_type_ids=token_type_ids)
 
-        loss = loss_fn(outputs, targets)
+        loss = loss_fn(outputs, targets, weights)
         epoch_train_loss += loss.item()
         loss.backward()
         optimizer.step()
@@ -50,15 +53,15 @@ def eval_fn(data_loader, model, device,weights):
             ids = ids.to(device, dtype=torch.long)
             token_type_ids = token_type_ids.to(device, dtype=torch.long)
             mask = mask.to(device, dtype=torch.long)
-            targets = targets.to(device, dtype=torch.float)
+            targets = targets.to(device, dtype=torch.long)
             weights = weights.to(device, dtype=torch.float)
 
             outputs = model(ids=ids, mask=mask, token_type_ids=token_type_ids)
             loss = loss_fn(outputs,targets, weights)
             epoch_eval_loss += loss.item()
-            print(targets)
+            # print(targets)
             fin_targets.extend(targets.cpu().detach().numpy().tolist())
-            print(outputs)
-            print(outputs.max(1, keepdim=False)[1])
+            # print(outputs)
+            # print(outputs.max(1, keepdim=False)[1])
             fin_outputs.extend(outputs.max(1, keepdim=False)[1].cpu().detach().numpy().tolist())
     return fin_outputs, fin_targets, epoch_eval_loss/len(data_loader)
