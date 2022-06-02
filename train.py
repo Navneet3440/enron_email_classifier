@@ -16,7 +16,8 @@ from transformers import get_linear_schedule_with_warmup
 
 def calculate_weights(data_frame):
     weights = []
-    for tag in sorted(data_frame['class_tag'].unique()tolist()):
+    for tag in sorted(data_frame['class_tag'].unique().tolist()):
+        print(tag)
         count = (data_frame['class_tag'] == tag).sum()
         weights.append(1-(count/data_frame.shape[0]))
     print(weights)
