@@ -10,6 +10,8 @@ inputs/*.ipynb
 inputs/*.csv
 inputs/*test_v1.csv
 inputs/v3_corpus
+inputs/*.bin
+inputs/dump/*.bin
 *.ipynb
 out_*.csv
 *corpus*.csv
