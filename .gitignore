@@ -14,4 +14,5 @@ inputs/v3_corpus
 out_*.csv
 *corpus*.csv
 env_eron
+env_enron
 enron_with_categories
