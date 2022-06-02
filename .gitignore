@@ -1,0 +1,17 @@
+*deb
+*pyc
+__pycache__/
+*.bin
+*.out
+*.ipynb
+inputs/v3_corpus/
+inputs/dump/*1095k.csv
+inputs/*.ipynb
+inputs/*.csv
+inputs/*test_v1.csv
+inputs/v3_corpus
+*.ipynb
+out_*.csv
+*corpus*.csv
+env_eron
+enron_with_categories
