@@ -25,6 +25,18 @@ def calculate_weights(data_frame):
     print(f"sum of weights-{sum(weights)}")
     return weights
 
+def calculate_weights_2(data_frame):
+    counts = []
+    print(data_frame.shape[0])
+    for tag in sorted(data_frame['class_tag'].unique().tolist()):
+        count = (data_frame['class_tag'] == tag).sum()
+        counts.append(count)
+    max_count = max(counts)
+    weights = [max_count/i for i in counts]
+    print(weights)
+    print(f"sum of weights-{sum(weights)}")
+    return weights
+
 
 def run():
     dfx = pd.read_csv(config.TRAINING_FILE)
@@ -36,7 +48,7 @@ def run():
 
     df_train = df_train.reset_index(drop=True)
     df_valid = df_valid.reset_index(drop=True)
-    weights = calculate_weights(df_train)
+    weights = calculate_weights_2(df_train)
     weights =torch.tensor(weights, dtype = torch.float)
     print("Shape of train datframe:",df_train.shape)
     print("Shape of validation dataframe:",df_valid.shape)
