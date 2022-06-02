@@ -16,9 +16,10 @@ from transformers import get_linear_schedule_with_warmup
 
 def calculate_weights(data_frame):
     weights = []
-    for tag in data_frame['class_tag'].unique():
+    for tag in sorted(data_frame['class_tag'].unique()tolist()):
         count = (data_frame['class_tag'] == tag).sum()
-        weights.append(count/data_frame.shape[0])
+        weights.append(1-(count/data_frame.shape[0]))
+    print(weights)
     return weights
 
 
@@ -92,6 +93,7 @@ def run():
 
     best_accuracy = 0
     best_eval_loss = np.inf
+    result = []
 
     for epoch in range(config.EPOCHS):
         epoch_train_loss = engine.train_fn(train_data_loader, model, optimizer, device, scheduler, weights)
@@ -103,6 +105,10 @@ def run():
         print("Train loss = ", epoch_train_loss)
         print("Validation Loss = ", epoch_eval_loss)
         print("Accuracy Score =", accuracy)
+        result.append((epoch+1,epoch_train_loss,epoch_eval_loss,accuracy))
+        df_results = pd.DataFrame(result, columns = ['epoc','train_loss','valid_loss','valic_accuracy'])
+        df_results.to_csv('./result.csv', index=False)
+
         if config.TRAINING_MODE == 'ba':
             best_eval_loss = np.inf
         if accuracy > best_accuracy and epoch_eval_loss < best_eval_loss:
