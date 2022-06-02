@@ -20,7 +20,9 @@ def clean_data(data_location:str):
     messages = list(map(email.message_from_string, email_dataframe['content']))
     email_dataframe['email_text'] = list(map(get_content_from_email, messages))
     email_dataframe.drop(index = email_dataframe.query("class_tag == 7 or class_tag == 8").index, inplace=True)
-    email_dataframe.reset_index(inplace=True)
+    email_dataframe.drop_duplicates(subset='email_text',inplace=True)
+    email_dataframe.reset_index(drop=True, inplace=True)
+
     # email_dataframe.drop(columns='content', inplace=True)
     email_dataframe.to_csv('final_data.csv', index= False)
     return None
