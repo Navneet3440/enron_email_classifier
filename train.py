@@ -38,7 +38,7 @@ def calculate_weights_2(data_frame):
     print(final_weights)
 
     print(f"sum of weights-{sum(weights)}")
-    return weights
+    return final_weights
 
 
 def run():
