@@ -1,7 +1,7 @@
 import transformers
 
 DEVICE = "cuda"
-MAX_LEN = 384
+MAX_LEN = 256
 TRAIN_BATCH_SIZE = 8
 VALID_BATCH_SIZE = 8
 EPOCHS = 50
