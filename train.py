@@ -33,7 +33,10 @@ def calculate_weights_2(data_frame):
         counts.append(count)
     max_count = max(counts)
     weights = [max_count/i for i in counts]
-    print(weights)
+    sum_weight = sum(weights)
+    final_weights = [i/sum_weight for i in weights]
+    print(final_weights)
+
     print(f"sum of weights-{sum(weights)}")
     return weights
 
