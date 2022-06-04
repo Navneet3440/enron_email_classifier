@@ -93,7 +93,7 @@ def run():
             "params": [
                 p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
             ],
-            "weight_decay": 0.1,
+            "weight_decay": 0.2,
         },
         {
             "params": [
