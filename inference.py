@@ -8,19 +8,18 @@ import transformers
 from tqdm import tqdm
 
 
-BERT_PATH = 'bert-base-multilingual-cased'
+BERT_PATH = 'bert-base-uncased'
 LINEAR_INPUT = 768
-MAX_LEN = 128
-THRESHOLD_VALUE = 0.75
-TOKENIZER = transformers.BertTokenizer.from_pretrained(BERT_PATH, do_lower_case=False)
-INFER_BATCH_SIZE = 4
+MAX_LEN = 512
+TOKENIZER = transformers.BertTokenizer.from_pretrained(BERT_PATH, do_lower_case=True)
+INFER_BATCH_SIZE = 8
 
 class BERT_CLASSIFIER(nn.Module):
         def __init__(self):
             super(BERT_CLASSIFIER, self).__init__()
             self.bert = transformers.BertModel.from_pretrained(BERT_PATH,return_dict=False)
             self.bert_drop = nn.Dropout(0.3)
-            self.out = nn.Linear(LINEAR_INPUT, 1)
+            self.out = nn.Linear(LINEAR_INPUT, 6)
 
         def forward(self, ids, mask, token_type_ids):
             _, o2 = self.bert(ids, attention_mask=mask, token_type_ids=token_type_ids)
@@ -83,8 +82,8 @@ def infer_fn(data_loader, model, device):
 
 
 def run():
-    csv_file_loc = sys.argv[1]
-    model_location = sys.argv[2]
+    csv_file_loc = './test_bert_inference.csv'
+    model_location = './bert-base-uncased_512_ds1_ba_lr3e-05_3_best_balance_accuracy_forward_removed.bin'
 
 
     if os.path.exists(csv_file_loc):
@@ -94,14 +93,14 @@ def run():
         elif csv_file_loc.split('.')[-1] == 'txt':
             with open(csv_file_loc) as fl_fix:
                 fl_content = fl_fix.read()
-                df_inference = pd.DataFrame(fl_content.split('\n')[:-1],columns=['sentence'])
+                df_inference = pd.DataFrame(fl_content.split('\n')[:-1],columns=['email_text'])
         else:
             print(f"Cannot recognize file type of {csv_file_loc} as either csv or txt")
 
         try:
-            inference_dataset = BERTDataset(sent=df_inference.sentences.values)
+            inference_dataset = BERTDataset(sent=df_inference.email_text.values)
         except:
-            inference_dataset = BERTDataset(sent=df_inference.sentence.values)
+            inference_dataset = BERTDataset(sent=df_inference.email_text.values)
 
         inference_dataloader = torch.utils.data.DataLoader(
             inference_dataset, batch_size=INFER_BATCH_SIZE, num_workers=1
@@ -121,10 +120,9 @@ def run():
             model.load_state_dict(torch.load(model_location,map_location=torch.device("cpu")))
         model.to(device)
         model.eval()
-        sent_out , logit_score = infer_fn(inference_dataloader, model, device)
-        logit_score = [i for b in logit_score for i in b]
-        df_out = pd.DataFrame({'sentence':sent_out,'logit_score':logit_score})
-        df_out.to_csv(os.path.join(os.path.dirname(csv_file_loc), 'out_' + os.path.basename(csv_file_loc).split('.')[0] + '_' + os.path.basename(model_location).split('.')[0] + '.csv'), index =False)
+        sent_out , labels = infer_fn(inference_dataloader, model, device)
+        df_out = pd.DataFrame({'sentence':sent_out,'model_category_label':labels})
+        df_out.to_csv('./bert_inference.csv', index =False)
     else:
         print(f"Model path at {model_location} dosen't exist")
 
