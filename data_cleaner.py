@@ -9,17 +9,17 @@ def clean_data(data_location:str):
     files = data_folder.glob('./*/*.txt')
     data = [(i.name.split('.')[0], i.read_text()) for i in files]
     data_frame = pd.DataFrame(data, columns = ['file_id','content'])
-    class_tags_files = data_folder.glob('./*/*.cats')
-    data_cat = [(i.name.split('.')[0], i.read_text().split('\n')[0]) for i in class_tags_files]
-    tag_dataframe = pd.DataFrame(data_cat, columns =['file_id','class_tag'])
+    category_tags_files = data_folder.glob('./*/*.cats')
+    data_cat = [(i.name.split('.')[0], i.read_text().split('\n')[0]) for i in category_tags_files]
+    tag_dataframe = pd.DataFrame(data_cat, columns =['file_id','category_tag'])
     email_dataframe = data_frame.set_index('file_id').join(tag_dataframe.set_index('file_id'))
-    email_dataframe['class_tag'] = email_dataframe['class_tag'].astype('str')
-    email_dataframe['class_tag'] = email_dataframe['class_tag'].apply(lambda x: int(x.split(',')[1].strip()) if x.split(',')[0].strip() == '1' else np.NaN)
-    email_dataframe['class_tag'] = email_dataframe['class_tag'].astype('int')
+    email_dataframe['category_tag'] = email_dataframe['category_tag'].astype('str')
+    email_dataframe['category_tag'] = email_dataframe['category_tag'].apply(lambda x: int(x.split(',')[1].strip()) if x.split(',')[0].strip() == '1' else np.NaN)
+    email_dataframe['category_tag'] = email_dataframe['category_tag'].astype('int')
     email_dataframe.reset_index(inplace=True)
     messages = list(map(email.message_from_string, email_dataframe['content']))
     email_dataframe['email_text'] = list(map(get_content_from_email, messages))
-    email_dataframe.drop(index = email_dataframe.query("class_tag == 7 or class_tag == 8").index, inplace=True)
+    email_dataframe.drop(index = email_dataframe.query("category_tag == 7 or category_tag == 8").index, inplace=True)
     email_dataframe.drop_duplicates(subset='email_text',inplace=True)
     email_dataframe.reset_index(drop=True, inplace=True)
 

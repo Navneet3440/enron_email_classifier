@@ -17,8 +17,8 @@ from transformers import get_linear_schedule_with_warmup
 def calculate_weights(data_frame):
     weights = []
     print(data_frame.shape[0])
-    for tag in sorted(data_frame['class_tag'].unique().tolist()):
-        count = (data_frame['class_tag'] == tag).sum()
+    for tag in sorted(data_frame['category_tag'].unique().tolist()):
+        count = (data_frame['category_tag'] == tag).sum()
         weight_value = (1-(count/data_frame.shape[0]))/(config.NUMBER_OF_CLASS-1)
         print(f"{tag}-{weight_value}")
         weights.append(weight_value)
@@ -28,8 +28,8 @@ def calculate_weights(data_frame):
 def calculate_weights_2(data_frame):
     counts = []
     print(data_frame.shape[0])
-    for tag in sorted(data_frame['class_tag'].unique().tolist()):
-        count = (data_frame['class_tag'] == tag).sum()
+    for tag in sorted(data_frame['category_tag'].unique().tolist()):
+        count = (data_frame['category_tag'] == tag).sum()
         counts.append(count)
     max_count = max(counts)
     weights = [max_count/i for i in counts]
@@ -43,10 +43,10 @@ def calculate_weights_2(data_frame):
 
 def run():
     dfx = pd.read_csv(config.TRAINING_FILE)
-    dfx['class_tag'] = dfx['class_tag'] - 1
+    dfx['category_tag'] = dfx['category_tag'] - 1
     print("Shape of datframe:",dfx.shape)
     df_train, df_valid = model_selection.train_test_split(
-        dfx, test_size=0.2, random_state=42, stratify=dfx.class_tag.values
+        dfx, test_size=0.2, random_state=42, stratify=dfx.category_tag.values
     )
 
     df_train = df_train.reset_index(drop=True)
@@ -57,7 +57,7 @@ def run():
     print("Shape of validation dataframe:",df_valid.shape)
 
     train_dataset = dataset.BERTDataset(
-        sent=df_train.email_text.values, target=df_train.class_tag.values
+        sent=df_train.email_text.values, target=df_train.category_tag.values
     )
 
     train_data_loader = torch.utils.data.DataLoader(
@@ -65,7 +65,7 @@ def run():
     )
 
     valid_dataset = dataset.BERTDataset(
-        sent=df_valid.email_text.values, target=df_valid.class_tag.values
+        sent=df_valid.email_text.values, target=df_valid.category_tag.values
     )
 
     valid_data_loader = torch.utils.data.DataLoader(
