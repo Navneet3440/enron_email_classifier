@@ -93,7 +93,7 @@ def run():
             "params": [
                 p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
             ],
-            "weight_decay": 0.01,
+            "weight_decay": 0.1,
         },
         {
             "params": [
@@ -103,10 +103,10 @@ def run():
         },
     ]
 
-    num_train_steps = int(len(df_train) / config.TRAIN_BATCH_SIZE * config.EPOCHS)
+    num_train_steps = int((len(df_train) / config.TRAIN_BATCH_SIZE) * config.EPOCHS)
     optimizer = AdamW(optimizer_parameters, lr=config.LEARNING_RATE)
     scheduler = get_linear_schedule_with_warmup(
-        optimizer, num_warmup_steps=0, num_training_steps=num_train_steps
+        optimizer, num_warmup_steps= int((len(df_train) / config.TRAIN_BATCH_SIZE))*1, num_training_steps=num_train_steps
     )
 
     best_accuracy = 0
