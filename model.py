@@ -7,7 +7,7 @@ class BERT_CLASSIFIER(nn.Module):
     def __init__(self):
         super(BERT_CLASSIFIER, self).__init__()
         self.bert = transformers.BertModel.from_pretrained(config.BERT_PATH)
-        self.bert_drop = nn.Dropout(0.3)
+        self.bert_drop = nn.Dropout(0.1)
         self.out = nn.Linear(config.LINEAR_INPUT_SIZE, config.NUMBER_OF_CLASS)
 
     def forward(self, ids, mask, token_type_ids):
