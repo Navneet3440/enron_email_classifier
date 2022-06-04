@@ -119,13 +119,15 @@ def run():
         print(f" Model output is {outputs}")
         print(f"Actual target is {targets}")
         accuracy = metrics.accuracy_score(targets, outputs)
-        balanced_accuracy = metrics.balanced_accuracy_score(targets, outputs, adjusted= True)
+        balanced_accuracy = metrics.balanced_accuracy_score(targets, outputs, adjusted= False)
+        balanced_accuracy_adjusted = metrics.balanced_accuracy_score(targets, outputs, adjusted= True)
         print("Train loss = ", epoch_train_loss)
         print("Validation Loss = ", epoch_eval_loss)
         print("Accuracy Score =", accuracy)
         print("Balanced Accuracy = ", balanced_accuracy)
-        result.append((epoch+1,epoch_train_loss,epoch_eval_loss,accuracy, balanced_accuracy))
-        df_results = pd.DataFrame(result, columns = ['epoc','train_loss','valid_loss','valic_accuracy','valid_balanced_accuracy'])
+        print("Balanced Accuracy Adjusted = ", balanced_accuracy_adjusted)
+        result.append((epoch+1,epoch_train_loss,epoch_eval_loss,accuracy, balanced_accuracy, balanced_accuracy_adjusted))
+        df_results = pd.DataFrame(result, columns = ['epoc','train_loss','valid_loss','valic_accuracy','valid_balanced_accuracy','valid_balanced_accuracy_adjusted'])
         df_results.to_csv('./result.csv', index=False)
 
         if config.TRAINING_MODE == 'ba':
