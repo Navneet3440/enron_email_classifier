@@ -15,7 +15,7 @@ DATASET_FILE_VERSION_COUNT = 1
 MODEL_PATH = f"./inputs/{BERT_PATH}_{MAX_LEN}_ds{DATASET_FILE_VERSION_COUNT}_{TRAINING_MODE}_lr{str(LEARNING_RATE)}_"
 MODEL_PATH_2 = f"./inputs/dump/{BERT_PATH}_{MAX_LEN}_ds{DATASET_FILE_VERSION_COUNT}_{TRAINING_MODE}_lr{str(LEARNING_RATE)}_"
 TRAINING_FILE = (
-    f"./final_data.csv"
+    f"./final_data_forward_removed.csv"
 )
 if "cased" in BERT_PATH.split("-"):
     TOKENIZER = transformers.BertTokenizer.from_pretrained(
