@@ -51,6 +51,7 @@ def run():
 
     df_train = df_train.reset_index(drop=True)
     df_valid = df_valid.reset_index(drop=True)
+    df_valid.to_csv('./test_bert_inference.csv')
     weights = calculate_weights_2(df_train)
     weights =torch.tensor(weights, dtype = torch.float)
     print("Shape of train datframe:",df_train.shape)
