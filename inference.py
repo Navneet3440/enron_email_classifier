@@ -83,7 +83,7 @@ def infer_fn(data_loader, model, device):
 
 def run():
     csv_file_loc = './test_bert_inference.csv'
-    model_location = './bert-base-uncased_512_ds1_ba_lr3e-05_3_best_balance_accuracy_forward_removed.bin'
+    model_location = './bert-base-uncased_512_ds1_ba_lr3e-05_3_best_balance_accuracy_forward_removed_2.bin'
 
 
     if os.path.exists(csv_file_loc):
