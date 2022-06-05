@@ -36,7 +36,20 @@ def calculate_weights_2(data_frame):
     sum_weight = sum(weights)
     final_weights = [i/sum_weight for i in weights]
     print(final_weights)
+    print(f"sum of weights-{sum(weights)}")
+    return final_weights
 
+def calculate_weights_3(data_frame):
+    counts = []
+    print(data_frame.shape[0])
+    for tag in sorted(data_frame['category_tag'].unique().tolist()):
+        count = (data_frame['category_tag'] == tag).sum()
+        counts.append(count)
+    max_count = max(counts)
+    weights = [1 for i in counts]
+    sum_weight = sum(weights)
+    final_weights = [i/sum_weight for i in weights]
+    print(final_weights)
     print(f"sum of weights-{sum(weights)}")
     return final_weights
 
@@ -52,7 +65,7 @@ def run():
     df_train = df_train.reset_index(drop=True)
     df_valid = df_valid.reset_index(drop=True)
     df_valid.to_csv('./test_bert_inference.csv')
-    weights = calculate_weights_2(df_train)
+    weights = calculate_weights_3(df_train)
     weights =torch.tensor(weights, dtype = torch.float)
     print("Shape of train datframe:",df_train.shape)
     print("Shape of validation dataframe:",df_valid.shape)
